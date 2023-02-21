@@ -1,25 +1,41 @@
+const emailRegex = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+
 const validRequest = (req, res, next) => {
-  // valid properties requisition
-   const requiredProperties = ['email', 'password'];
-   if (requiredProperties.every((property) => property in req.body)) {
-     next();
-   } else {
-     res.sendStatus(400);
-   }
+  const { password, email } = req.body;
+  if (!email) {
+    res.status(400).json({ message: 'O campo "email" é obrigatório' });
+  }
+  if (!password) {
+    res.status(400).json({ message: 'O campo "password" é obrigatório' });
+  } 
+  next();
+};
+
+const validDataRequest = (req, res, next) => {
+  const { password, email } = req.body;
+  const validEmail = emailRegex.test(email);
+  const validPassword = password.length >= 6;
+  if (!validEmail) {
+    res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+  }
+  if (!validPassword) {
+    res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+  }
+  next();
 };
 
 const gerToken = (req, res, next) => {
-  // token
-    let token = '';
-    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for (let i = 0; i < 16; i += 1) {
-        token += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-    }
-    res.token = token;
-    next();
+  let token = '';
+  const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < 16; i += 1) {
+    token += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+  }
+  res.token = token;
+  next();
 };
 
 module.exports = {
   validRequest,
+  validDataRequest,
   gerToken,
 };

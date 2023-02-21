@@ -1,7 +1,7 @@
 const express = require('express');
 const readFile = require('./ultils');
 
-const { gerToken, validRequest } = require('./middlewares'); 
+const { gerToken, validRequest, validDataRequest } = require('./middlewares'); 
 
 const app = express();
 app.use(express.json());
@@ -29,7 +29,7 @@ app.get('/talker', async (req, res) => {
   }
 });
 
-app.post('/login', validRequest, gerToken, (req, res) => {
+app.post('/login', validRequest, validDataRequest, gerToken, (req, res) => {
   res.status(200).json({ token: res.token });
 });
 
