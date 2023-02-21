@@ -1,6 +1,8 @@
 const express = require('express');
 const readFile = require('./ultils');
 
+const { gerToken, validRequest } = require('./middlewares'); 
+
 const app = express();
 app.use(express.json());
 
@@ -27,7 +29,11 @@ app.get('/talker', async (req, res) => {
   }
 });
 
-// não remova esse endpoint, e para o avaliador funcionar!
+app.post('/login', validRequest, gerToken, (req, res) => {
+  res.status(200).json({ token: res.token });
+});
+
+// não remova esse endpoint, é para o avaliador funcionar!
 app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
