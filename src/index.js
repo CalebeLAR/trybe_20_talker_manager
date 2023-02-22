@@ -1,7 +1,16 @@
 const express = require('express');
 const readFile = require('./ultils');
 
-const { gerToken, validRequest, validDataRequest } = require('./middlewares'); 
+const { 
+  gerToken, 
+  validLogin, 
+  validDataLogin, 
+  validToken, 
+  validName, 
+  validTalker, 
+  validWatchedAt, 
+  validAge, 
+  validRate } = require('./middlewares'); 
 
 const app = express();
 app.use(express.json());
@@ -29,8 +38,18 @@ app.get('/talker', async (req, res) => {
   }
 });
 
-app.post('/login', validRequest, validDataRequest, gerToken, (req, res) => {
+app.post('/login', validLogin, validDataLogin, gerToken, (req, res) => {
   res.status(200).json({ token: res.token });
+});
+
+app.post('/talker', 
+  validToken,
+  validName,
+  validAge,
+  validTalker,
+  validWatchedAt,
+  validRate, async (req, res) => {
+    res.status(201).json({ ...req.body });
 });
 
 // não remova esse endpoint, é para o avaliador funcionar!
