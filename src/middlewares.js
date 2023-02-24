@@ -1,3 +1,5 @@
+const { getTalkers } = require('./ultils');
+
 const emailRegex = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
 const dateRegex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
 
@@ -107,6 +109,16 @@ const validRate = (req, res, next) => {
   return next();
 };
 
+const validID = async (req, res, next) => {
+  const id = Number(req.params.id);
+  const talkers = await getTalkers();
+  const indexTalker = talkers
+    .findIndex((talker) => Number(talker.id) === Number(id));
+  if (indexTalker === -1) {
+    return res.sendStatus(404);
+  }
+  return next();
+};
 module.exports = {
   validLogin,
   validDataLogin,
@@ -117,4 +129,5 @@ module.exports = {
   validTalker,
   validWatchedAt,
   validRate,
+  validID,
 };
