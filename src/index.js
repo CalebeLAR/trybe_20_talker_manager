@@ -1,5 +1,5 @@
 const express = require('express');
-const readFile = require('./ultils');
+const { getTalkers, writeTalkers } = require('./ultils');
 
 const { 
   gerToken, 
@@ -20,7 +20,7 @@ const PORT = '3000';
 
 app.get('/talker', async (req, res) => {
   try {
-     const talkers = await readFile();
+     const talkers = await getTalkers();
      if (talkers) return res.status(200).json(talkers);
    } catch (error) {
      res.status(500).send({ message: error.message });
@@ -30,7 +30,7 @@ app.get('/talker', async (req, res) => {
  app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const talkers = await readFile();
+    const talkers = await getTalkers();
     const talker = talkers.find((tal) => tal.id === Number(id));
     if (talker.id) return res.status(200).json(talker);
   } catch (error) {
@@ -49,7 +49,17 @@ app.post('/talker',
   validTalker,
   validWatchedAt,
   validRate, async (req, res) => {
-    res.status(201).json({ ...req.body });
+    try {
+      const talkers = await getTalkers();
+      const indexLastTalker = [talkers.length - 1];
+      const lastTalkerId = talkers[indexLastTalker].id;
+      const newId = lastTalkerId + 1;
+      const newTalker = { id: newId, ...req.body };
+      await writeTalkers(JSON.stringify([...talkers, newTalker]));
+      res.status(201).json(newTalker);
+    } catch (error) {
+      res.sendStatus(500);
+    }
 });
 
 // não remova esse endpoint, é para o avaliador funcionar!

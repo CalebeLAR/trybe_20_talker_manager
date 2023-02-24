@@ -3,7 +3,7 @@ const path = require('path');
 
 const talkerPath = path.resolve(__dirname, './talker.json');
 
-const readFile = async () => {
+const getTalkers = async () => {
   try {
     const data = await fs.readFile(talkerPath);
     return JSON.parse(data);
@@ -12,4 +12,12 @@ const readFile = async () => {
   }
 };
 
-module.exports = readFile;
+const writeTalkers = async (talker) => {
+  try {
+    await fs.writeFile(talkerPath, talker);
+  } catch (error) {
+    console.error(`Erro ao escrever o arquivo: ${error.message}`);
+  }
+};
+
+module.exports = { getTalkers, writeTalkers };

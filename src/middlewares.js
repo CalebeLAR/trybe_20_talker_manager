@@ -37,7 +37,7 @@ const gerToken = (req, res, next) => {
 };
 
 const validToken = (req, res, next) => {
-  const { headers: { token } } = req;
+  const { authorization: token } = req.headers;
   if (!token) {
     return res.status(401).json({ message: 'Token não encontrado' });
   }
@@ -69,7 +69,7 @@ const validAge = (req, res, next) => {
   if (!Number.isInteger(age)) {
     return res.status(400).json({ message: 'O campo "age" deve ser um "number" do tipo inteiro' });
   }
-  if (age.length < 18) {
+  if (age < 18) {
     return res.status(400).json({ message: 'A pessoa palestrante deve ser maior de idade' });
   }
   return next();
@@ -95,10 +95,13 @@ const validWatchedAt = (req, res, next) => {
 };
 const validRate = (req, res, next) => {
   const { talk: { rate } } = req.body;
+  if (Number(rate) > 5 || Number(rate) < 1) {
+    return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
   if (!rate) {
     return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
   }
-  if (!Number.isInteger(rate) || rate > 5 || rate < 1) {
+  if (!Number.isInteger(rate)) {
     return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
   return next();
