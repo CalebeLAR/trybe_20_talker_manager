@@ -19,6 +19,21 @@ app.use(express.json());
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
 
+app.get('/talker/search', validToken, async (req, res) => {
+  const { q } = req.query;
+  try {
+    const talkers = await getTalkers();
+    const talker = talkers.filter((talk) => talk.name.includes(q));
+    console.log(talker);
+
+    if (!q) return res.status(200).json(talkers);
+    if (talker) return res.status(200).json(talker);
+    if (!talker) return res.status(200).json([]);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
 app.get('/talker', async (req, res) => {
   try {
     const talkers = await getTalkers();
